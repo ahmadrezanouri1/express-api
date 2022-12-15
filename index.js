@@ -2,7 +2,12 @@ const express = require("express");
 let users = require("./users");
 const { body, validationResult } = require("express-validator");
 const app = express();
+
+//parse to json file
 app.use(express.json());
+
+//parse body with coding
+app.use(express.urlencoded({ extended: true }));
 
 // get all users
 app.get("/api/users", (req, res) => {
