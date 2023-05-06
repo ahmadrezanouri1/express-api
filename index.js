@@ -1,33 +1,17 @@
-const AdminBroExpress = require("@admin-bro/express");
-const AdminBro = require("admin-bro");
-const AdminBroMongoose = require("@admin-bro/mongoose");
 const express = require("express");
 const User = require("./models/user");
 const Product = require("./models/product");
+const category = require("./routes/Category");
 const product = require("./routes/product");
 // let users = require("./users");
 const { body, validationResult } = require("express-validator");
 const app = express();
 const mongoose = require("mongoose");
 const user = require("./routes/user");
-AdminBro.registerAdapter(AdminBroMongoose);
-const AdminBroOptions = {
-  resources: [User, Product],
-  branding: {
-    companyName: "فروشگاه اینترنتی دیجیتالی شو",
-  },
-};
-const AdminBro2 = new AdminBro(AdminBroOptions);
-
-const adminBro = new AdminBro({
-  databases: [mongoose],
-
-  rootPath: "/admin",
-});
-
-const router = AdminBroExpress.buildRouter(adminBro);
+const { router, adminBro } = require("./routes/admin");
 
 app.use(adminBro.options.rootPath, router);
+app.use(express.static(__dirname + "/public"));
 
 mongoose
   .connect("mongodb://localhost:8000/aliiiiiiiii")
@@ -42,6 +26,7 @@ mongoose
 app.use(express.json());
 app.use("/", user);
 app.use("/", product);
+app.use("/", category);
 
 //parse body with coding
 app.use(express.urlencoded({ extended: true }));
