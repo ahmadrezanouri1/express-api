@@ -8,13 +8,12 @@ const { body, validationResult } = require("express-validator");
 const app = express();
 const mongoose = require("mongoose");
 const user = require("./routes/user");
-const { router, adminBro } = require("./routes/admin");
+const { router, adminBro, adminRouter } = require("./routes/admin");
 
-app.use(adminBro.options.rootPath, router);
+app.use(adminBro.options.rootPath, adminRouter);
 app.use(express.static(__dirname + "/public"));
-
 mongoose
-  .connect("mongodb://localhost:8000/aliiiiiiiii")
+  .connect("mongodb://127.0.0.1:8000/myapp")
   .then(() => {
     console.log("mongodb connect");
   })

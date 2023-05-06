@@ -4,17 +4,22 @@ const User = require("../models/user");
 const { body, validationResult } = require("express-validator");
 
 const route = express.Router();
-
-// get all users
+const removePassword = (req, res, next) => {
+  const oldSend = res.send;
+  res.send = function (body) {
+    if (body && body.password) {
+      delete body.password;
+    }
+    oldSend.call(this, body);
+  };
+  next();
+};
 route.get("/api/users", async (req, res) => {
   const users = await User.find();
-  res.json({
-    data: users,
-    massage: "ok",
-  });
-  res.end();
+  res.send(users);
 });
 
+route.use(removePassword);
 // get a user with params
 
 route.get("/api/users/:id", async (req, res) => {
