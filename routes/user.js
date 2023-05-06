@@ -1,18 +1,9 @@
 const express = require("express");
+const User = require("../models/user");
 
 const { body, validationResult } = require("express-validator");
 
-const mongoose = require("mongoose");
-
 const route = express.Router();
-
-const userSchema = mongoose.Schema({
-  frist_name: String,
-  last_name: String,
-  emai: String,
-});
-
-const User = new mongoose.model("User", userSchema);
 
 // get all users
 route.get("/api/users", async (req, res) => {
@@ -72,7 +63,7 @@ route.post(
 route.put(
   "/api/users/:id",
   [
-    body("email", "email must be valid").isEmail(),
+    // body("email", "email must be valid").isEmail(),
     body("first_name", "first name cant be empty").notEmpty(),
     body("last_name", "last name cant be empty").notEmpty(),
   ],
