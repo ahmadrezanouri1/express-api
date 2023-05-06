@@ -4,16 +4,27 @@ const AdminBroMongoose = require("@admin-bro/mongoose");
 const User = require("../models/user");
 const Product = require("../models/product");
 const Category = require("../models/category");
+const mongoose = require("mongoose");
 
 AdminBro.registerAdapter(AdminBroMongoose);
 const adminBro = new AdminBro({
   assets: {
     styles: ["/css/admin.css"],
   },
-  // databases: [mongoose],
+  databases: [mongoose],
   rootPath: "/admin",
   resources: [
-    { resource: User, options: { label: "کاربرا" } },
+    {
+      resource: User,
+      options: {
+        name: "کاربران",
+        parent: {
+          name: "کاربران",
+
+          icon: "fa-solid fa-users",
+        },
+      },
+    },
     { resource: Product, options: { label: "محصولات" } },
     { resource: Category, options: { label: "دسته بندی ها" } },
   ],
