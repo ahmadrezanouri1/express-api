@@ -1,10 +1,13 @@
 const AdminBroExpress = require("@admin-bro/express");
 const AdminBro = require("admin-bro");
 const AdminBroMongoose = require("@admin-bro/mongoose");
-const User = require("../models/user");
 const Product = require("../models/product");
 const Category = require("../models/category");
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const User = require("../models/user");
+const express = require("express");
+const router1 = express.Router();
 
 AdminBro.registerAdapter(AdminBroMongoose);
 const adminBro = new AdminBro({
@@ -17,14 +20,13 @@ const adminBro = new AdminBro({
     {
       resource: User,
       options: {
-        name: "کاربران",
-        parent: {
-          name: "کاربران",
-
-          icon: "fa-solid fa-users",
+        properties: {
+          password: { isVisible: true },
+          _id: { isVisible: false },
         },
       },
     },
+
     { resource: Product, options: { label: "محصولات" } },
     { resource: Category, options: { label: "دسته بندی ها" } },
   ],
@@ -43,6 +45,48 @@ const adminBro = new AdminBro({
   },
 });
 
-const router = AdminBroExpress.buildRouter(adminBro);
+// متد ورود ادمین به پنل
+const login = async (email, password) => {
+  const user = await User.findByCredentials(email, password);
+  const token = await user.generateAuthToken();
+  return token;
+};
 
-module.exports = { router, adminBro };
+const router = AdminBroExpress.buildAuthenticatedRouter(adminBro, {
+  authenticate: async (email, password) => {
+    const user = await User.authenticate(email, password);
+    if (user) {
+      return { email: user.email, role: user.role };
+    }
+    return null;
+  },
+  cookieName: "adminbro",
+  cookiePassword: "1234",
+});
+
+const adminRouter = AdminBroExpress.buildAuthenticatedRouter(
+  adminBro,
+  {
+    authenticate: async (email, password) => {
+      const user = await User.findOne({ email });
+      if (!user) {
+        throw new Error("Invalid email or password");
+      }
+      if (!user.admin == true) throw new Error("تو ادمین نیستی");
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        throw new Error("Invalid email or password");
+      }
+      return user;
+    },
+    cookiePassword: "some-secret-password-used-to-secure-cookie",
+    cookieName: "admin-bro",
+  },
+  null,
+  {
+    resave: false,
+    saveUninitialized: true,
+  }
+);
+
+module.exports = { router, adminBro, adminRouter };
