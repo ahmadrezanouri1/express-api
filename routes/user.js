@@ -5,7 +5,7 @@ const { body, validationResult } = require("express-validator");
 
 const route = express.Router();
 
-// get all users
+  // get all users
 route.get("/api/users", async (req, res) => {
   const users = await User.find();
   res.json({
