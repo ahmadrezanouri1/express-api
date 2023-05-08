@@ -3,6 +3,7 @@ const AdminBro = require("admin-bro");
 const AdminBroMongoose = require("@admin-bro/mongoose");
 const Product = require("../models/product");
 const Category = require("../models/category");
+const Photo = require("../models/photo");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
@@ -36,6 +37,7 @@ const adminBro = new AdminBro({
         User: "کاربران",
         Product: "محصولات",
         Category: "دسته بندی ها",
+        Photo: "آپلود تصویر",
       },
     },
   },
@@ -89,4 +91,5 @@ const adminRouter = AdminBroExpress.buildAuthenticatedRouter(
   }
 );
 
+// const adminRouter = AdminBroExpress.buildRouter(adminBro);
 module.exports = { router, adminBro, adminRouter };

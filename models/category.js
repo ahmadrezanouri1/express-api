@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const categorySchema = new mongoose.Schema({
   title: String,
-  childCategory: [String],
+  childCategory: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   parentOf: Boolean,
   post: [Object],
 });
