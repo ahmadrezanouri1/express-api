@@ -56,6 +56,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 //parse to json file
 app.use(express.json());
 app.use("/", user);
+
 app.use("/", product);
 app.use("/", category);
 app.use("/", upload);

@@ -8,7 +8,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const express = require("express");
-const router1 = express.Router();
 
 AdminBro.registerAdapter(AdminBroMongoose);
 const adminBro = new AdminBro({
@@ -28,7 +27,23 @@ const adminBro = new AdminBro({
       },
     },
 
-    { resource: Product, options: { label: "محصولات" } },
+    {
+      resource: Product,
+      options: {
+        properties: {
+          category: {
+            type: "select",
+            availableValues: async () => {
+              const categories = await Category.find();
+              return categories.map((category) => ({
+                value: category._id,
+                label: category.name,
+              }));
+            },
+          },
+        },
+      },
+    },
     { resource: Category, options: { label: "دسته بندی ها" } },
   ],
   locale: {
@@ -91,5 +106,4 @@ const adminRouter = AdminBroExpress.buildAuthenticatedRouter(
   }
 );
 
-// const adminRouter = AdminBroExpress.buildRouter(adminBro);
-module.exports = { router, adminBro, adminRouter };
+module.exports = { adminRouter, adminBro };

@@ -5,7 +5,7 @@ const Category = require("../models/category");
 const route = express.Router();
 
 route.get("/api/products", async (req, res) => {
-  let products = await Product.find({});
+  let products = await Product.find({}).populate("category", "title -_id");
 
   if (!products) {
     return res.json({
